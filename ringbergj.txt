@@ -1,1 +1,0 @@
-I have completed the install of Ubunut 20.04 LTS on my computer and I am ready to use Git and GitHub
