@@ -26,7 +26,7 @@ try:
         #rate.sleep()
         #/dev/ttyUSB0
         ##                         port='/dev/pts/2',
-        port = rospy.get_param('~port', '/dev/pts/1')
+        port = rospy.get_param('~port', '/dev/pts/2')
         serialPort = serial.Serial(port, baudrate = 4800, timeout = 1) #put in correct port HERE
 
     
@@ -89,8 +89,8 @@ try:
                 longitude = c_msg.longitude
                 a,b,c,d = utm.from_latlon(latitude, longitude) #input the latitude and longitude into the converter and we get 4 new values assigned to abcd
                 new_line = str(a) + " " + str(b) + " " + str(c) + " " +  d	# saves the values in a c_msg.gpgga_read
-                c_msg.easting = float(a)
-                c_msg.northing = float(b)
+                c_msg.utm_easting = float(a)
+                c_msg.utm_northing = float(b)
                 c_msg.zone = c
                 c_msg.letter = d
 
