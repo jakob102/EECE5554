@@ -40,28 +40,28 @@ try:
                 c_msg.header.frame_id = 'GPS1_Frame'
                 items = c_msg.gpgga_read.split(",")	#split the c_msg.gpgga_read into items by every commma sign
                 UTC = float(items[1])
-                lat = float(items[2]) #in DD.mmmm 
+                latitude = float(items[2]) #in DD.mmmm 
                 latdir = str(items[3])
-                lon = float(items[4]) #in DD.mmmm 
+                longitude = float(items[4]) #in DD.mmmm 
                 londir = str(items[5])
                 c_msg.hdop = float(items[8])
-                c_msg.alt = float(items[9])
+                c_msg.altitude = float(items[9])
 
         ### this if my function to convert the above degree minute values to degree decimal I am not sure how to separate it out yet      
                 if 'S' in latdir:
-                    lat = lat/-100
+                    latitude = latitude/-100
                 else:
-                    lat = lat/100
+                    latitude = latitude/100
                 if 'W' in londir:
-                    lon = lon/-100
+                    longitude = longitude/-100
                 else:
-                    lon = lon/100
-                lat_degree = math.trunc(lat)
-                lon_degree = math.trunc(lon)
-                lat_decimal = (lat-lat_degree)/0.6
-                lon_decimal = (lon-lon_degree)/0.6
-                c_msg.lat = float(lat_degree+lat_decimal)
-                c_msg.lon= float(lon_degree+lon_decimal)
+                    longitude = longitude/100
+                lat_degree = math.trunc(latitude)
+                lon_degree = math.trunc(longitude)
+                lat_decimal = (latitude-lat_degree)/0.6
+                lon_decimal = (longitude-lon_degree)/0.6
+                c_msg.latitude = float(lat_degree+lat_decimal)
+                c_msg.longitude= float(lon_degree+lon_decimal)
 
         ########## this is my function to convert the above UTC time to epoch seconds for ROS
 
@@ -85,12 +85,12 @@ try:
 
         ############
 
-                lat = c_msg.lat
-                lon = c_msg.lon
-                a,b,c,d = utm.from_latlon(lat, lon) #input the lat and lon into the converter and we get 4 new values assigned to abcd
+                latitude = c_msg.latitude
+                longitude = c_msg.longitude
+                a,b,c,d = utm.from_latlon(latitude, longitude) #input the latitude and longitude into the converter and we get 4 new values assigned to abcd
                 new_line = str(a) + " " + str(b) + " " + str(c) + " " +  d	# saves the values in a c_msg.gpgga_read
-                c_msg.utm_easting = float(a)
-                c_msg.utm_northing = float(b)
+                c_msg.easting = float(a)
+                c_msg.northing = float(b)
                 c_msg.zone = c
                 c_msg.letter = d
 
