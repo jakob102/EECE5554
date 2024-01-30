@@ -1,0 +1,5 @@
+<launch>
+<node name="talker" pkg="gps_driver" type="standalone_driver.py" output="screen" >
+ <param name="port" type="String" value="$(arg port)" /> 
+</node>
+</launch>

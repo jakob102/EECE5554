@@ -1,0 +1,10 @@
+Header header
+float64 lat
+float64 lon
+float64 alt
+float64 utm_easting
+float64 utm_northing
+uint8 zone
+string letter
+float64 hdop
+string gpgga_read
