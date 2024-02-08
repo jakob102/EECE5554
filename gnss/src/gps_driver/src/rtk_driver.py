@@ -9,14 +9,14 @@ import serial
 import rosbag
 
 from std_msgs.msg import String
-from gps_driver.msg import Customgps
+from gps_driver.msg import Customrtk
 
 if __name__ == '__main__':
     
-    rospy.init_node('talker', anonymous=True)
-    c_msg = Customgps()
-    pub = rospy.Publisher('gps',Customgps, queue_size=10)
-    bag = rosbag.Bag('abby1.bag','w')  
+    rospy.init_node('rtk_gnss', anonymous=True)
+    c_msg = Customrtk()
+    pub = rospy.Publisher('gps',Customrtk, queue_size=10)
+    bag = rosbag.Bag('walkingRTK.bag','w')  
     
     #rate = rospy.Rate(10) # 10hz
 try:    
@@ -26,19 +26,19 @@ try:
         #rate.sleep()
         #/dev/ttyUSB0
         ##                         port='/dev/pts/2',
-        port = rospy.get_param('~port', '/dev/pts/2')
+        port = rospy.get_param('~port', '/dev/pts/8')
         serialPort = serial.Serial(port, baudrate = 4800, timeout = 1) #put in correct port HERE
 
     
         new_lines = []
 
         for line in serialPort:
-            c_msg.gpgga_read = str(line)
-            items = c_msg.gpgga_read.split(",")
+            c_msg.gngga_read = str(line)
+            items = c_msg.gngga_read.split(",")
             label=items[0]
-            if label=="b'$GPGGA":
+            if label=="b'$GNGGA":
                 c_msg.header.frame_id = 'GPS1_Frame'
-                items = c_msg.gpgga_read.split(",")	#split the c_msg.gpgga_read into items by every commma sign
+                items = c_msg.gngga_read.split(",")	#split the c_msg.gngga_read into items by every commma sign
                 UTC = float(items[1])
                 latitude = float(items[2]) #in DD.mmmm 
                 latdir = str(items[3])
@@ -46,6 +46,7 @@ try:
                 londir = str(items[5])
                 c_msg.hdop = float(items[8])
                 c_msg.altitude = float(items[9])
+                c_msg.fix_quality = int(items[6])
 
         ### this if my function to convert the above degree minute values to degree decimal I am not sure how to separate it out yet      
                 if 'S' in latdir:
@@ -88,16 +89,16 @@ try:
                 latitude = c_msg.latitude
                 longitude = c_msg.longitude
                 a,b,c,d = utm.from_latlon(latitude, longitude) #input the latitude and longitude into the converter and we get 4 new values assigned to abcd
-                new_line = str(a) + " " + str(b) + " " + str(c) + " " +  d	# saves the values in a c_msg.gpgga_read
+                new_line = str(a) + " " + str(b) + " " + str(c) + " " +  d	# saves the values in a c_msg.gngga_read
                 c_msg.utm_easting = float(a)
                 c_msg.utm_northing = float(b)
                 c_msg.zone = c
                 c_msg.letter = d
 
-                new_lines.append(new_line) #adds the new c_msg.gpgga_read to a list
+                new_lines.append(new_line) #adds the new c_msg.gngga_read to a list
 
                 pub.publish(c_msg)
-                rospy.loginfo(c_msg)        #this c_msg.gpgga_read prints to terminal / ROS work space, just a print statement
+                rospy.loginfo(c_msg)        #this c_msg.gngga_read prints to terminal / ROS work space, just a print statement
                 bag.write('gps', c_msg)
                     
                 if rospy.is_shutdown():
