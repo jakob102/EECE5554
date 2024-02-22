@@ -26,7 +26,7 @@ try:
         #rate.sleep()
         #/dev/ttyUSB0
         ##                         port='/dev/pts/2',
-        port = rospy.get_param('~port', '/dev/pts/2')
+        port = rospy.get_param('~port', '/dev/pts/5')
         serialPort = serial.Serial(port, baudrate = 4800, timeout = 1) #put in correct port HERE
 
     
